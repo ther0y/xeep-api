@@ -1,0 +1,120 @@
+syntax = "proto3";
+option go_package = "github.com/ther0y/xeep-auth-service/auther";
+
+message User {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string phone = 4;
+  bool is_email_verified = 5;
+  bool is_phone_verified = 6;
+  string avatar = 7;
+  int64 created_at = 8;
+  int64 updated_at = 9;
+  int64 deleted_at = 10;
+}
+
+message AuthenticationData {
+  string id = 1;
+  string accessToken = 2;
+  string refreshToken = 3;
+}
+
+message Session {
+  string id = 1;
+  string key = 2;
+  string ip = 3;
+  string deviceId = 4;
+  string device = 5;
+  string userId = 6;
+  int64 created_at = 7;
+  int64 updated_at = 8;
+  int64 deleted_at = 9;
+  int64 issued_at = 10;
+}
+
+message LoginRequest {
+  string identifier = 1;
+  string password = 2;
+}
+
+message IsUniqueUserIdentifierRequest {
+  string identifier = 1;
+}
+
+message IsUniqueUserIdentifierResponse {
+  bool isUnique = 1;
+}
+
+message RegisterRequest {
+  string username = 1;
+  string password = 2;
+  string phone = 3;
+  string email = 4;
+  string otpValidationKey = 5;
+}
+
+message SessionsResponse {
+  repeated Session sessions = 1;
+}
+
+message SendSmSOTPRequest {
+  string phone = 1;
+}
+
+message SendEmailOTPRequest {
+  string email = 1;
+}
+
+message SuccessResponse {
+  bool success = 1;
+}
+
+message VerifySmsOtpRequest {
+  string phone = 1;
+  string otp = 2;
+}
+
+message VerifySmsOtpResponse {
+  string validationKey = 1;
+  bool success = 2;
+}
+
+message VerifyEmailOtpRequest {
+  string email = 1;
+  string otp = 2;
+}
+
+message OTPValidationResponse {
+  string validationID = 1;
+  bool success = 2;
+}
+
+message Empty {
+}
+
+message ProfileResponse {
+  User user = 1;
+}
+
+service Auther {
+  rpc IsUniqueUserIdentifier(IsUniqueUserIdentifierRequest) returns (IsUniqueUserIdentifierResponse);
+
+  rpc Login(LoginRequest) returns (AuthenticationData);
+  rpc Logout(Empty) returns (SuccessResponse);
+  rpc LogoutAll(Empty) returns (SuccessResponse);
+
+  rpc Refresh(Empty) returns (AuthenticationData);
+  rpc Register(RegisterRequest) returns (AuthenticationData);
+
+  rpc Sessions(Empty) returns (SessionsResponse);
+
+  rpc Profile(Empty) returns (ProfileResponse);
+
+  rpc SendSmsOTP(SendSmSOTPRequest) returns (SuccessResponse);
+  rpc VerifySmsOTP(VerifySmsOtpRequest) returns (VerifySmsOtpResponse);
+
+  rpc SendEmailOTP(SendEmailOTPRequest) returns (OTPValidationResponse);
+  rpc VerifyEmailOTP(VerifyEmailOtpRequest) returns (OTPValidationResponse);
+}
+
