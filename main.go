@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	v1handlers "github.com/ther0y/xeep-api/internal/handlers/v1"
+	"github.com/ther0y/xeep-api/internal/handlers/v1"
 	"github.com/ther0y/xeep-api/internal/utils"
+	"github.com/ther0y/xeep-api/internal/validators"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -18,7 +19,7 @@ func main() {
 	}
 
 	e := echo.New()
-	e.Validator = &utils.CustomValidator{Validator: validator.New()}
+	e.Validator = &validators.CustomValidator{Validator: validator.New()}
 
 	v1Routes := e.Group("/v1")
 
