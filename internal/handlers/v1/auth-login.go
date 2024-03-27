@@ -7,7 +7,7 @@ import (
 )
 
 type LoginPayload struct {
-	Identifier string `json:"identifier" validate:"required"`
+	Identifier string `json:"identifier" validate:"required,uniqueIdentifier"`
 	Password   string `json:"password" validate:"required"`
 }
 
@@ -22,9 +22,7 @@ func AuthLogin(c echo.Context) error {
 	}
 
 	if err := c.Validate(payload); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"message": err.Error(),
-		})
+		return err
 	}
 
 	resp, err := authService.Login(c.Request().Context(), payload.Identifier, payload.Password)

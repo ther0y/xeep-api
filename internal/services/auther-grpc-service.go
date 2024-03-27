@@ -9,10 +9,6 @@ import (
 	"log"
 )
 
-type autherGrpc struct {
-	cc grpc.ClientConnInterface
-}
-
 type autherGrpcService struct {
 	client auther.AutherClient
 }
@@ -46,4 +42,16 @@ func (s *autherGrpcService) Login(ctx context.Context, identifier string, passwo
 	}
 
 	return res, nil
+}
+
+func (s *autherGrpcService) IsUniqueUserIdentifier(ctx context.Context, identifier string) (bool, error) {
+	res, err := s.client.IsUniqueUserIdentifier(ctx, &auther.IsUniqueUserIdentifierRequest{
+		Identifier: identifier,
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	return res.IsUnique, nil
 }
