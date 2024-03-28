@@ -7,20 +7,9 @@ import (
 	"net/http"
 )
 
-// ValidationErrorObject represents a single field's validation error
-type ValidationErrorObject struct {
+type ValidationError struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
-}
-
-// CustomValidationError wraps the slice of ValidationErrorObject
-type CustomValidationError struct {
-	Errors []ValidationErrorObject
-}
-
-// Error makes CustomValidationError satisfy the error interface
-func (cve CustomValidationError) Error() string {
-	return "validation failed"
 }
 
 type CustomValidator struct {
@@ -35,7 +24,7 @@ func (cv *CustomValidator) RegisterCustomValidation() {
 
 func (cv *CustomValidator) Validate(i interface{}) error {
 	if err := cv.Validator.Struct(i); err != nil {
-		// Convert the validation errors into a slice of ValidationErrorObject
+		// Convert the validation errors into a slice of ValidationError
 		validationErrors := cv.TranslateErrors(err)
 		// Return an echo.HTTPError with the structured validation errors
 		return echo.NewHTTPError(http.StatusBadRequest, map[string]interface{}{
@@ -45,11 +34,11 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return nil
 }
 
-func (cv *CustomValidator) TranslateErrors(err error) []ValidationErrorObject {
-	var errors []ValidationErrorObject
+func (cv *CustomValidator) TranslateErrors(err error) []ValidationError {
+	var errors []ValidationError
 	if validationErrors, ok := err.(validator.ValidationErrors); ok {
 		for _, e := range validationErrors {
-			errors = append(errors, ValidationErrorObject{
+			errors = append(errors, ValidationError{
 				Field:   e.Field(),
 				Message: e.Tag(),
 			})
