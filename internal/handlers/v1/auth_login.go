@@ -7,8 +7,8 @@ import (
 )
 
 type LoginPayload struct {
-	Identifier string `json:"identifier" validate:"required,uniqueIdentifier"`
-	Password   string `json:"password" validate:"required"`
+	Identifier string `json:"identifier" validate:"required,min=3,max=100"`
+	Password   string `json:"password" validate:"required,min=4,max=50"`
 }
 
 func AuthLogin(c echo.Context) error {
