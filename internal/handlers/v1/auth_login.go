@@ -6,15 +6,15 @@ import (
 	"net/http"
 )
 
-type LoginPayload struct {
+type payload struct {
 	Identifier string `json:"identifier" validate:"required,min=3,max=100"`
 	Password   string `json:"password" validate:"required,min=4,max=50"`
 }
 
-func AuthLogin(c echo.Context) error {
+func authLogin(c echo.Context) error {
 	authService := services.NewAuthService()
 
-	payload := new(LoginPayload)
+	payload := new(payload)
 	if err := c.Bind(payload); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"message": "Invalid payload",

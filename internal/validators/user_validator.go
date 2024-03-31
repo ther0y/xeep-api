@@ -1,7 +1,9 @@
 package validators
 
 import (
+	"context"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"net/mail"
 	"regexp"
 )
@@ -10,6 +12,20 @@ var (
 	isValidUsername = regexp.MustCompile(`^[a-zA-Z0-9_]+$`).MatchString
 	isValidPhone    = regexp.MustCompile(`(\+98|0|98)?(9\d{9})`).MatchString
 )
+
+func (cv *CustomValidator) UniqueIdentifier(fl validator.FieldLevel) bool {
+	identifier := fl.Field().String()
+
+	ok, err := cv.AuthService.IsUniqueUserIdentifier(context.Background(), identifier)
+	if err != nil {
+		// TODO: make such error logs more readable/trackable as such errors are not being sent to the client
+		//  and are only visible in the server logs
+		fmt.Println(err)
+		return false
+	}
+
+	return ok
+}
 
 func ValidateEmail(email string) error {
 	//if err := ValidateString(email, 5, 50); err != nil {

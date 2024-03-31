@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	"github.com/ther0y/xeep-api/internal/handlers/v1"
+	v1handlers "github.com/ther0y/xeep-api/internal/handlers/v1"
 	"github.com/ther0y/xeep-api/internal/services"
 	"github.com/ther0y/xeep-api/internal/utils"
 	"github.com/ther0y/xeep-api/internal/validators"
@@ -57,10 +57,7 @@ func main() {
 		e.DefaultHTTPErrorHandler(err, c)
 	}
 
-	v1Routes := e.Group("/v1")
-
-	// Auth routes
-	v1Routes.POST("/auth/login", v1handlers.AuthLogin)
+	v1handlers.SetupRoutes(e)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "ok")
